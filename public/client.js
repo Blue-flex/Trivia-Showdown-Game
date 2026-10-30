@@ -1,4 +1,5 @@
-const socket = io();
+// Force immediate local and production routing detection
+const socket = io(window.location.origin);
 
 const viewHome = document.getElementById("home");
 const viewLobby = document.getElementById("lobby");
@@ -10,50 +11,66 @@ let myCode = null;
 let hostState = false;
 let choiceVoted = false;
 
-// Fix Connection Status Indicator text elements dynamically
+// Instantly force state indicator status transitions
 socket.on("connect", () => {
-  connectionTag.textContent = "● Online";
-  connectionTag.style.color = "#10ac84";
+  connectionTag.textContent = "● ONLINE & READY";
+  connectionTag.style.color = "#00f2fe";
 });
 
 socket.on("disconnect", () => {
-  connectionTag.textContent = "● Offline (Reconnecting...)";
+  connectionTag.textContent = "● OFFLINE (RECONNECTING...)";
   connectionTag.style.color = "#ff4757";
 });
 
-document.getElementById("createBtn").addEventListener("click", () => {
-  let name = document.getElementById("nickname").value.trim();
-  if (name) socket.emit("create_room", name);
-});
-
-document.getElementById("joinBtn").addEventListener("click", () => {
-  let name = document.getElementById("nickname").value.trim();
-  let code = document.getElementById("roomCode").value.trim();
-  if (name && code) socket.emit("join_room", { code, name });
-});
-
+// Use robust universal interaction handlers to avoid DOM initialization skips
 document.body.addEventListener("click", (e) => {
-  if (e.target && e.target.id === "startBtn") {
+  if (!e.target) return;
+
+  if (e.target.id === "createBtn") {
+    let name = document.getElementById("nickname").value.trim();
+    if (name) {
+      socket.emit("create_room", name);
+    } else {
+      alert("Please enter a nickname first!");
+    }
+  }
+
+  if (e.target.id === "joinBtn") {
+    let name = document.getElementById("nickname").value.trim();
+    let code = document.getElementById("roomCode").value.trim();
+    if (name && code) {
+      socket.emit("join_room", { code, name });
+    } else {
+      alert("Please enter both a nickname and a valid room code!");
+    }
+  }
+
+  if (e.target.id === "startBtn") {
     socket.emit("start_game");
   }
-});
-  socket.emit("start_game");
-});
 
-// Fix Native Browser Copy Functionality
-document.getElementById("copyBtn").addEventListener("click", () => {
-  if (!myCode) return;
-  navigator.clipboard.writeText(myCode).then(() => {
-    let btn = document.getElementById("copyBtn");
-    btn.textContent = "Copied! ✓";
-    setTimeout(() => { btn.textContent = "Copy Code"; }, 2000);
-  }).catch(() => {
-    alert("Room Code: " + myCode);
-  });
-});
+  if (e.target.id === "copyBtn") {
+    if (!myCode) return;
+    
+    // Universal fail-safe clipboard extraction handler
+    const el = document.createElement('textarea');
+    el.value = myCode;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    
+    e.target.textContent = "COPIED! ✓";
+    e.target.style.background = "#10ac84";
+    setTimeout(() => { 
+      e.target.textContent = "Copy Code"; 
+      e.target.style.background = "#10ac84";
+    }, 2000);
+  }
 
-document.getElementById("leaveBtn").addEventListener("click", () => {
-  window.location.reload();
+  if (e.target.id === "leaveBtn") {
+    window.location.reload();
+  }
 });
 
 function displayRoomState(room) {
@@ -109,7 +126,6 @@ function displayRoomState(room) {
     return;
   }
 
-  // Handle Waiting Room UI Updates
   document.getElementById("displayCode").textContent = room.code;
   document.getElementById("playerCount").textContent = room.players.length + " Players";
   
