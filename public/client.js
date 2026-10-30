@@ -32,7 +32,11 @@ document.getElementById("joinBtn").addEventListener("click", () => {
   if (name && code) socket.emit("join_room", { code, name });
 });
 
-document.getElementById("startBtn").addEventListener("click", () => {
+document.body.addEventListener("click", (e) => {
+  if (e.target && e.target.id === "startBtn") {
+    socket.emit("start_game");
+  }
+});
   socket.emit("start_game");
 });
 
