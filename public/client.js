@@ -1,4 +1,3 @@
-// Force immediate local and production routing detection
 const socket = io(window.location.origin);
 
 const viewHome = document.getElementById("home");
@@ -11,7 +10,6 @@ let myCode = null;
 let hostState = false;
 let choiceVoted = false;
 
-// Instantly force state indicator status transitions
 socket.on("connect", () => {
   connectionTag.textContent = "● ONLINE & READY";
   connectionTag.style.color = "#00f2fe";
@@ -22,37 +20,28 @@ socket.on("disconnect", () => {
   connectionTag.style.color = "#ff4757";
 });
 
-// Use robust universal interaction handlers to avoid DOM initialization skips
 document.body.addEventListener("click", (e) => {
   if (!e.target) return;
 
   if (e.target.id === "createBtn") {
     let name = document.getElementById("nickname").value.trim();
-    if (name) {
-      socket.emit("create_room", name);
-    } else {
-      alert("Please enter a nickname first!");
-    }
+    if (name) socket.emit("create_room", name);
+    else alert("Please enter a nickname first!");
   }
 
   if (e.target.id === "joinBtn") {
     let name = document.getElementById("nickname").value.trim();
     let code = document.getElementById("roomCode").value.trim();
-    if (name && code) {
-      socket.emit("join_room", { code, name });
-    } else {
-      alert("Please enter both a nickname and a valid room code!");
-    }
+    if (name && code) socket.emit("join_room", { code, name });
+    else alert("Please fill out both the nickname and code fields!");
   }
 
-  if (e.target && e.target.closest("#startBtn")) {
-  socket.emit("start_game");
-}
+  if (e.target.id === "startBtn") {
+    socket.emit("start_game");
+  }
 
   if (e.target.id === "copyBtn") {
     if (!myCode) return;
-    
-    // Universal fail-safe clipboard extraction handler
     const el = document.createElement('textarea');
     el.value = myCode;
     document.body.appendChild(el);
@@ -64,7 +53,6 @@ document.body.addEventListener("click", (e) => {
     e.target.style.background = "#10ac84";
     setTimeout(() => { 
       e.target.textContent = "Copy Code"; 
-      e.target.style.background = "#10ac84";
     }, 2000);
   }
 
@@ -92,12 +80,11 @@ function displayRoomState(room) {
         room.activeQuestion.choices.forEach((choice, idx) => {
           let btn = document.createElement("button");
           btn.className = "option-btn";
-          btn.textContent = choice;
+          btn.textContent = choice; // Securely binds text value safely
           btn.addEventListener("click", () => {
             if (choiceVoted) return;
             choiceVoted = true;
             btn.classList.add("selected");
-            
             container.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
             socket.emit("submit_choice", { choiceIndex: idx });
           });
@@ -116,34 +103,67 @@ function displayRoomState(room) {
     
     let list = document.getElementById("leaderboardList");
     list.innerHTML = "";
+    
     let ordered = [...room.players].sort((a, b) => b.score - a.score);
     ordered.forEach((p, index) => {
       let li = document.createElement("li");
       li.className = "player-row";
-      li.innerHTML = `<span>#${index + 1} ${p.nickname}</span> <strong>${p.score} pts</strong>`;
+      
+      // Enforce absolute anti-injection rendering boundaries via node text injection elements
+      let nameSpan = document.createElement("span");
+      nameSpan.textContent = `#${index + 1} ${p.nickname}`;
+      
+      let scoreStrong = document.createElement("strong");
+      scoreStrong.textContent = `${p.score} pts`;
+      
+      li.appendChild(nameSpan);
+      li.appendChild(scoreStrong);
       list.appendChild(li);
     });
     return;
   }
 
+  // Lobby defaults logic block
   document.getElementById("displayCode").textContent = room.code;
-  document.getElementById("playerCount").textContent = room.players.length + " Players";
+  
+  // Exclude disconnected users when rendering connected count limits
+  let activeUsersCount = room.players.filter(p => p.connected).length;
+  document.getElementById("playerCount").textContent = `${activeUsersCount} Online`;
   
   let list = document.getElementById("players");
   list.innerHTML = "";
+  
   room.players.forEach(p => {
     let li = document.createElement("li");
     li.className = "player-row";
-    li.innerHTML = `<span>👤 ${p.nickname}</span> ${p.id === room.hostId ? '<span class="badge host">HOST</span>' : ''} ${!p.connected ? '<span class="badge offline">OFFLINE</span>' : ''}`;
+    
+    let wrapperSpan = document.createElement("span");
+    wrapperSpan.textContent = `👤 ${p.nickname}`;
+    li.appendChild(wrapperSpan);
+
+    if (p.id === room.hostId) {
+      let hostBadge = document.createElement("span");
+      hostBadge.className = "badge host";
+      hostBadge.textContent = "HOST";
+      li.appendChild(hostBadge);
+    }
+    if (!p.connected) {
+      let offlineBadge = document.createElement("span");
+      offlineBadge.className = "badge offline";
+      offlineBadge.textContent = "OFFLINE";
+      li.appendChild(offlineBadge);
+    }
     list.appendChild(li);
   });
 
   hostState = socket.id === room.hostId;
   document.getElementById("startBtn").classList.toggle("hidden", !hostState);
-  document.getElementById("startBtn").disabled = room.players.length < 2;
+  
+  // Base check: require at least 2 online/active users to open match pathway
+  document.getElementById("startBtn").disabled = activeUsersCount < 2;
   
   document.getElementById("hostMessage").textContent = hostState
-    ? (room.players.length < 2 ? "Waiting for players to join..." : "Roster verified. Ready to initiate match.")
+    ? (activeUsersCount < 2 ? "Waiting for players to log in online..." : "Roster verified. Ready to initiate match.")
     : "Waiting for host to start the game match loops...";
 }
 
