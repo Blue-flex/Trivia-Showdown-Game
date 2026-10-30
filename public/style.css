@@ -1,238 +1,259 @@
-/* --- EYE-CATCHING RETRO ARCAVE CANVAS ENGINE --- */
+/* --- EYE-CATCHING NEON PLUM RETRO ARCADE ARENA --- */
 
 body, .shell {
-  background: linear-gradient(135deg, #1b0d33 0%, #3a063b 100%) !important; /* Rich Electric Orchid-Grape */
+  background: linear-gradient(135deg, #180a2b 0%, #2f0530 100%) !important; /* Rich Dark Velvet Grape Canvas */
   color: #ffffff !important;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   margin: 0;
-  padding: 1.5rem;
+  padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 /* Custom Text Logo Header Design Styles */
 .brand-mark {
-  background: linear-gradient(90deg, #00f2fe, #4facfe) !important; /* Bright Neon Turquoise Accent */
+  background: linear-gradient(90deg, #00f2fe, #4facfe) !important; /* Electric Cyber-Cyan Glow Overlay */
   color: #000000 !important;
-  padding: 1rem 2rem;
+  padding: 1.2rem 2.5rem;
   font-weight: 900;
-  font-size: 1.8rem !important;
+  font-size: 2.2rem !important; /* Eye-catching enlarged scale factor */
   text-align: center;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 4px solid #000000;
-  box-shadow: 6px 6px 0px #000000;
-  margin-bottom: 0.5rem;
-  letter-spacing: 2px;
+  box-shadow: 8px 8px 0px #000000;
+  margin-bottom: 0.3rem;
+  letter-spacing: 3px;
+  text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
 }
 
 .connection {
   text-align: center;
-  font-weight: bold;
-  font-size: 0.95rem;
-  margin-bottom: 2rem;
-  color: #a4b0be;
+  font-weight: 800;
+  font-size: 1rem;
+  margin-bottom: 2.5rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-/* High contrast clean card panel containers */
+/* High-contrast retro arcade card container layout */
 .panel {
   background: #ffffff !important;
-  color: #1b0d33 !important;
+  color: #180a2b !important;
   border: 4px solid #000000 !important;
-  box-shadow: 12px 12px 0px #000000 !important;
-  border-radius: 16px !important;
+  box-shadow: 14px 14px 0px #000000 !important; /* Bold comic-book drop shadow */
+  border-radius: 20px !important;
   padding: 2.5rem;
   width: 100%;
-  max-width: 480px;
+  max-width: 460px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* Forces clean separation between inputs and layouts */
+  gap: 1.8rem; /* Creates clean breathing room space between layers */
 }
 
 h2 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   margin: 0;
-  color: #3a063b !important;
-  font-weight: 800;
+  color: #2f0530 !important;
+  font-weight: 900;
+  line-height: 1.2;
 }
 
 h2 span {
-  color: #ff007f !important;
+  color: #ff007f !important; /* Hot Magenta Accent */
 }
 
 .accent-tag {
   color: #ff007f;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .intro {
-  color: #57606f;
+  color: #4b5563;
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   line-height: 1.5;
+  font-weight: 500;
 }
 
-/* Organized human form grouping layout fields */
+/* Form Separation Scopes */
 .input-block {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 label {
-  font-weight: 800;
+  font-weight: 900;
   text-transform: uppercase;
-  font-size: 0.85rem;
-  color: #3a063b;
+  font-size: 0.9rem;
+  color: #2f0530;
+  letter-spacing: 0.5px;
 }
 
 input {
-  padding: 1rem;
-  font-size: 1.1rem;
-  border: 3px solid #000000 !important;
-  border-radius: 8px !important;
-  background: #f1f2f6 !important;
-  color: #1b0d33 !important;
-  font-weight: 600;
+  padding: 1.1rem;
+  font-size: 1.15rem;
+  border: 4px solid #000000 !important;
+  border-radius: 12px !important;
+  background: #f3f4f6 !important;
+  color: #180a2b !important;
+  font-weight: 700;
+  transition: all 0.15s ease;
 }
 
 input:focus {
   outline: none;
   background: #ffffff !important;
   border-color: #4facfe !important;
+  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
 }
 
-/* Room Code Display UI */
+/* Access Key Display UI Container Box */
 .room-code-wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f1f2f6;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 2px dashed #000000;
-  margin-top: 0.5rem;
+  background: #f8fafc;
+  padding: 1.2rem;
+  border-radius: 12px;
+  border: 3px dashed #000000;
+  margin-top: 0.4rem;
+  gap: 1rem;
 }
 
 #displayCode {
-  font-size: 1.8rem;
-  letter-spacing: 4px;
+  font-size: 2.2rem;
+  letter-spacing: 5px;
   color: #ff007f;
+  font-weight: 900;
 }
 
-/* Punchy Arcade Action Button Mechanics */
+/* Premium Tactile Retro Buttons */
 button {
   font-family: inherit;
-  padding: 1rem 1.5rem;
-  font-size: 1.1rem;
-  font-weight: 800;
-  border: 3px solid #000000 !important;
-  border-radius: 8px !important;
+  padding: 1.1rem 1.8rem;
+  font-size: 1.15rem;
+  font-weight: 900;
+  border: 4px solid #000000 !important;
+  border-radius: 12px !important;
   cursor: pointer;
-  box-shadow: 4px 4px 0px #000000 !important;
-  transition: all 0.1s ease;
+  box-shadow: 5px 5px 0px #000000 !important;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 button.primary { background: #4facfe !important; color: white !important; }
+button.primary:hover { background: #3b97ee !important; }
+
 button.secondary { background: #ff007f !important; color: white !important; }
-button.copy-button { background: #10ac84 !important; color: white !important; font-size: 0.9rem; padding: 0.5rem 1rem; }
-button.leave-button { background: #747d8c !important; color: white !important; font-size: 0.95rem; }
+button.secondary:hover { background: #e00070 !important; }
+
+button.copy-button { background: #10ac84 !important; color: white !important; font-size: 0.95rem; padding: 0.6rem 1.2rem; min-width: 130px; }
+button.leave-button { background: #6b7280 !important; color: white !important; font-size: 1rem; margin-top: 0.5rem; }
 
 button:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px #000000 !important;
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0px #000000 !important;
 }
 
 button:active {
-  transform: translate(2px, 2px);
+  transform: translate(3px, 3px);
   box-shadow: 2px 2px 0px #000000 !important;
 }
 
 button:disabled {
-  background: #ced6e0 !important;
-  color: #747d8c !important;
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
   cursor: not-allowed;
   transform: none !important;
   box-shadow: 4px 4px 0px #000000 !important;
+  opacity: 0.7;
 }
 
-/* Input Row Isolation Splitting lines */
+/* Dashed Section Splitters */
 .join-row {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  margin-top: 1rem;
-  border-top: 3px dashed #ced6e0;
-  padding-top: 1.5rem;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  border-top: 4px dashed #e5e7eb;
+  padding-top: 2rem;
 }
 
-/* Roster / Player List Item Layout Rows */
+/* User Profile Roster Row Alignments */
 .players-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #1b0d33;
-  padding-bottom: 0.5rem;
-  margin-top: 0.5rem;
+  border-bottom: 3px solid #180a2b;
+  padding-bottom: 0.6rem;
+  margin-top: 0.4rem;
 }
 
-.players-heading h3 { margin: 0; font-size: 1.1rem; }
-.players-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.players-heading h3 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+.count { font-weight: 700; background: #e0e7ff; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.9rem; }
+.players-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem; }
 
 .player-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1rem;
-  background: #f1f2f6;
-  border-radius: 8px;
-  border: 2px solid #000000;
-  font-weight: 600;
+  padding: 1rem 1.2rem;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 3px solid #000000;
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
-.badge { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 800; color: white; }
-.badge.host { background: #ff007f; }
-.badge.offline { background: #747d8c; }
+.badge { font-size: 0.8rem; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 900; color: white; border: 2px solid #000000; }
+.badge.host { background: #ff007f; box-shadow: 2px 2px 0px #000000; }
+.badge.offline { background: #6b7280; box-shadow: 2px 2px 0px #000000; }
 
-/* Gameplay Answer Selection Grid Options */
+/* Gameplay Grid Separators */
 .options-grid {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 0.8rem;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
 }
 
 .option-btn {
   background: #ffffff !important;
-  color: #1b0d33 !important;
+  color: #180a2b !important;
   text-align: left;
   width: 100%;
+  box-shadow: 4px 4px 0px #000000 !important;
 }
 
 .option-btn.selected { background: #00f2fe !important; color: #000000 !important; }
 .option-btn.correct { background: #10ac84 !important; color: white !important; }
-.option-btn.incorrect { background: #2f3542 !important; color: #a4b0be !important; opacity: 0.5; }
+.option-btn.incorrect { background: #374151 !important; color: #9ca3af !important; opacity: 0.5; }
 
-/* Dynamic Celebration Trophy Node */
+/* Dynamic 3D Trophy Animation Podiums */
 #gameover::before {
   content: "🏆";
   display: block;
   text-align: center;
-  font-size: 6rem;
-  animation: bounceSpin 1.2s infinite alternate ease-in-out;
+  font-size: 6.5rem;
+  animation: bounceSpin 1.1s infinite alternate ease-in-out;
 }
 
 @keyframes bounceSpin {
   0% { transform: translateY(0) scale(1) rotate(-6deg); }
-  100% { transform: translateY(-25px) scale(1.15) rotate(6deg); }
+  100% { transform: translateY(-28px) scale(1.18) rotate(6deg); }
 }
 
-.timer-box { font-size: 2.2rem; font-weight: 900; color: #ff007f; text-align: center; }
-.notice { background: #fff2f9; border-left: 4px solid #ff007f; padding: 0.8rem; font-size: 0.95rem; font-weight: 600; color: #ff007f; }
+.timer-box { font-size: 2.5rem; font-weight: 900; color: #ff007f; text-align: center; margin-top: 0.2rem; }
+.notice { background: #fff1f2; border-left: 5px solid #ff007f; padding: 1rem; border-radius: 4px; font-size: 1rem; font-weight: 700; color: #ff007f; line-height: 1.4; }
 .hidden { display: none !important; }
-.microcopy { font-size: 0.85rem; color: #747d8c; text-align: center; margin: 0; }
+.microcopy { font-size: 0.9rem; color: #6b7280; text-align: center; margin: 0; font-weight: 500; }
