@@ -46,6 +46,11 @@ function shuffleQuestions() {
   return shuffled.sort(() => Math.random() - 0.5).slice(0, 10);
 }
 
+function cleanInput(str, maxLen = 18) {
+  if (typeof str !== "string") return "";
+  return str.replace(/[<>]/g, "").trim().slice(0, maxLen);
+}
+
 function getRoomPayload(room) {
   let activeQuestion = null;
   if (room.status === "playing" && room.deck[room.currentIndex]) {
@@ -77,12 +82,18 @@ function updateRoom(code) {
 }
 
 function finishRound(room) {
+  // Clear any existing step transition handles to block multi-advance race loops
   if (room.clock) clearInterval(room.clock);
+  if (room.nextRoundTimeout) clearTimeout(room.nextRoundTimeout);
+  
+  // Close answer window immediately on server memory state
+  room.acceptingAnswers = false;
   
   let currentAns = room.deck[room.currentIndex].ansIndex;
   io.to(room.code).emit("reveal_answer", { correctIndex: currentAns });
 
-  setTimeout(() => {
+  // Retain transition handle reference to avoid duplicate scheduled calls
+  room.nextRoundTimeout = setTimeout(() => {
     room.currentIndex++;
     room.players.forEach(p => p.done = false);
 
@@ -97,7 +108,9 @@ function finishRound(room) {
 
 function runTimer(room) {
   room.timer = 15;
+  room.acceptingAnswers = true; // Enforce strict round validity windows
   updateRoom(room.code);
+  
   if (room.clock) clearInterval(room.clock);
 
   room.clock = setInterval(() => {
@@ -112,7 +125,10 @@ function runTimer(room) {
 }
 
 io.on("connection", (socket) => {
-  socket.on("create_room", (name) => {
+  socket.on("create_room", (rawName) => {
+    let name = cleanInput(rawName, 18);
+    if (!name) return socket.emit("err_msg", "Invalid nickname choice.");
+
     let code = Math.random().toString(36).substring(2, 7).toUpperCase();
     let room = {
       code,
@@ -122,7 +138,9 @@ io.on("connection", (socket) => {
       deck: [],
       currentIndex: 0,
       timer: 15,
-      clock: null
+      clock: null,
+      nextRoundTimeout: null,
+      acceptingAnswers: false
     };
     room.players.set(socket.id, { id: socket.id, nickname: name, connected: true, score: 0, done: false });
     rooms.set(code, room);
@@ -133,34 +151,66 @@ io.on("connection", (socket) => {
     updateRoom(code);
   });
 
-  socket.on("join_room", ({ code, name }) => {
-    let target = code.trim().toUpperCase();
-    let room = rooms.get(target);
+  socket.on("join_room", (payload) => {
+    // Malformed catch block: validate type before destructuring parameters
+    if (!payload || typeof payload !== "object") {
+      return socket.emit("err_msg", "Malformed data transmission package.");
+    }
     
-    if (!room || room.status !== "lobby" || room.players.size >= 12) {
-      return socket.emit("err_msg", "Cannot join room. Check code.");
+    let rawCode = payload.code;
+    let rawName = payload.name;
+    
+    let code = typeof rawCode === "string" ? rawCode.trim().toUpperCase() : String(rawCode || "").trim().toUpperCase();
+    let name = cleanInput(rawName, 18);
+
+    if (!code || !name) {
+      return socket.emit("err_msg", "Invalid entry fields. Data validation failed.");
     }
 
+    let room = rooms.get(code);
+    if (!room || room.status !== "lobby" || room.players.size >= 12) {
+      return socket.emit("err_msg", "Cannot join room. Verify code, status, or space.");
+    }
+
+    let duplicate = [...room.players.values()].some(p => p.nickname.toLowerCase() === name.toLowerCase() && p.connected);
+    if (duplicate) return socket.emit("err_msg", "That nickname is already in use.");
+
     room.players.set(socket.id, { id: socket.id, nickname: name, connected: true, score: 0, done: false });
-    socket.join(target);
-    socket.data.roomCode = target;
-    socket.emit("joined_ok", { code: target, nickname: name, isHost: false });
-    updateRoom(target);
+    socket.join(code);
+    socket.data.roomCode = code;
+    socket.emit("joined_ok", { code, nickname: name, isHost: false });
+    updateRoom(code);
   });
 
   socket.on("start_game", () => {
     let room = rooms.get(socket.data.roomCode);
-    if (room && socket.id === room.hostId && room.players.size >= 2) {
-      room.deck = shuffleQuestions();
-      room.status = "playing";
-      room.currentIndex = 0;
-      runTimer(room);
+    if (!room) return;
+    
+    // Strict block state: ignore start events if match has already moved past lobby state
+    if (room.status !== "lobby") return;
+    if (socket.id !== room.hostId) return;
+
+    // Filter minimum thresholds strictly to active, connected users
+    let activeCount = [...room.players.values()].filter(p => p.connected).length;
+    if (activeCount < 2) {
+      return socket.emit("err_msg", "You need at least 2 connected, online players to start!");
     }
+
+    room.deck = shuffleQuestions();
+    room.status = "playing";
+    room.currentIndex = 0;
+    runTimer(room);
   });
 
-  socket.on("submit_choice", ({ choiceIndex }) => {
+  socket.on("submit_choice", (payload) => {
+    if (!payload || typeof payload !== "object" || !("choiceIndex" in payload)) return;
+    let choiceIndex = parseInt(payload.choiceIndex, 10);
+
     let room = rooms.get(socket.data.roomCode);
     if (!room || room.status !== "playing") return;
+    
+    // Safety barrier check: strictly drop submissions received after deadline or transition
+    if (!room.acceptingAnswers) return;
 
     let p = room.players.get(socket.id);
     if (!p || p.done) return;
@@ -192,6 +242,7 @@ io.on("connection", (socket) => {
 
     if (![...room.players.values()].some(player => player.connected)) {
       if (room.clock) clearInterval(room.clock);
+      if (room.nextRoundTimeout) clearTimeout(room.nextRoundTimeout);
       rooms.delete(room.code);
     } else {
       updateRoom(room.code);
