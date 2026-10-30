@@ -1,22 +1,25 @@
 const socket = io();
 
-// Simple UI caching
 const viewHome = document.getElementById("home");
 const viewLobby = document.getElementById("lobby");
 const viewGame = document.getElementById("game");
 const viewOver = document.getElementById("gameover");
+const connectionTag = document.getElementById("connection");
 
 let myCode = null;
 let hostState = false;
 let choiceVoted = false;
 
-// Dynamic CSS Arcade Logo injection
-const brandMark = document.querySelector(".brand-mark");
-if (brandMark) {
-  brandMark.innerHTML = "⚡ TRIVIA SHOCKWAVE ⚡";
-  brandMark.style.fontSize = "1.5rem";
-  brandMark.style.letterSpacing = "2px";
-}
+// Fix Connection Status Indicator text elements dynamically
+socket.on("connect", () => {
+  connectionTag.textContent = "● Online";
+  connectionTag.style.color = "#10ac84";
+});
+
+socket.on("disconnect", () => {
+  connectionTag.textContent = "● Offline (Reconnecting...)";
+  connectionTag.style.color = "#ff4757";
+});
 
 document.getElementById("createBtn").addEventListener("click", () => {
   let name = document.getElementById("nickname").value.trim();
@@ -31,6 +34,22 @@ document.getElementById("joinBtn").addEventListener("click", () => {
 
 document.getElementById("startBtn").addEventListener("click", () => {
   socket.emit("start_game");
+});
+
+// Fix Native Browser Copy Functionality
+document.getElementById("copyBtn").addEventListener("click", () => {
+  if (!myCode) return;
+  navigator.clipboard.writeText(myCode).then(() => {
+    let btn = document.getElementById("copyBtn");
+    btn.textContent = "Copied! ✓";
+    setTimeout(() => { btn.textContent = "Copy Code"; }, 2000);
+  }).catch(() => {
+    alert("Room Code: " + myCode);
+  });
+});
+
+document.getElementById("leaveBtn").addEventListener("click", () => {
+  window.location.reload();
 });
 
 function displayRoomState(room) {
@@ -79,14 +98,14 @@ function displayRoomState(room) {
     let ordered = [...room.players].sort((a, b) => b.score - a.score);
     ordered.forEach((p, index) => {
       let li = document.createElement("li");
-      li.className = "player";
-      li.innerHTML = `<span>#${index + 1}</span> <strong>${p.nickname}</strong> <span>${p.score} pts</span>`;
+      li.className = "player-row";
+      li.innerHTML = `<span>#${index + 1} ${p.nickname}</span> <strong>${p.score} pts</strong>`;
       list.appendChild(li);
     });
     return;
   }
 
-  // Lobby defaults logic
+  // Handle Waiting Room UI Updates
   document.getElementById("displayCode").textContent = room.code;
   document.getElementById("playerCount").textContent = room.players.length + " Players";
   
@@ -94,14 +113,18 @@ function displayRoomState(room) {
   list.innerHTML = "";
   room.players.forEach(p => {
     let li = document.createElement("li");
-    li.className = "player";
-    li.textContent = p.nickname + (p.id === room.hostId ? " [HOST]" : "") + (!p.connected ? " (OFFLINE)" : "");
+    li.className = "player-row";
+    li.innerHTML = `<span>👤 ${p.nickname}</span> ${p.id === room.hostId ? '<span class="badge host">HOST</span>' : ''} ${!p.connected ? '<span class="badge offline">OFFLINE</span>' : ''}`;
     list.appendChild(li);
   });
 
   hostState = socket.id === room.hostId;
   document.getElementById("startBtn").classList.toggle("hidden", !hostState);
   document.getElementById("startBtn").disabled = room.players.length < 2;
+  
+  document.getElementById("hostMessage").textContent = hostState
+    ? (room.players.length < 2 ? "Waiting for players to join..." : "Roster verified. Ready to initiate match.")
+    : "Waiting for host to start the game match loops...";
 }
 
 socket.on("joined_ok", (data) => {
