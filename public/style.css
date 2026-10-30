@@ -1,44 +1,73 @@
-/* --- EXTRA VIBRANT ARCADE STYLING ENGINE --- */
-
 body, .shell {
-  background: linear-gradient(135deg, #2c1a4d 0%, #4a154b 100%) !important; /* Deep Vibrant Neon Plum */
+  background: linear-gradient(135deg, #2c1a4d 0%, #4a154b 100%) !important;
   color: #ffffff !important;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  padding: 0;
+  padding: 1rem;
 }
 
 .panel {
-  background: #ffffff !important; /* Crisp, clean card panel layers */
+  background: #ffffff !important;
   color: #2c1a4d !important;
   border: 4px solid #1e272e !important;
   box-shadow: 10px 10px 0px #000000 !important;
   border-radius: 12px !important;
-  padding: 2rem;
-  margin: 2rem auto;
-  max-width: 600px;
+  padding: 2.5rem;
+  margin: 3rem auto;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Forces clean element grouping separation spacing */
 }
 
-/* Custom Text Logo Engine style overrides */
 .brand-mark {
-  background: linear-gradient(90deg, #00f2fe, #4facfe) !important; /* Electric Turquoise Glow */
+  background: linear-gradient(90deg, #00f2fe, #4facfe) !important;
   color: #ffffff !important;
-  padding: 0.8rem;
+  padding: 1rem;
   font-weight: 900;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 3px solid #000000;
   box-shadow: 4px 4px 0px #000000;
+  margin-bottom: 1rem;
 }
 
 h1, h2, .accent {
   color: #4a154b !important;
   font-weight: 800;
+  margin: 0 0 0.5rem 0;
 }
 
-/* Transform game choice selections cleanly away from boring flat red tiles */
+label {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+input {
+  padding: 1rem;
+  font-size: 1.1rem;
+  border: 3px solid #000000 !important;
+  border-radius: 8px !important;
+  margin-bottom: 0.5rem;
+}
+
+/* Fix compressed layout structure by introducing explicit block wrappers */
+.actions {
+  margin-top: 0.5rem;
+}
+
+.join-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  border-top: 2px dashed #a4b0be;
+  padding-top: 1.5rem;
+}
+
 button.primary, button.secondary, .option-btn {
-  background: #4facfe !important; /* Smooth Retro Electric Blue */
+  background: #4facfe !important;
   color: #ffffff !important;
   font-weight: bold;
   border: 3px solid #000000 !important;
@@ -47,6 +76,7 @@ button.primary, button.secondary, .option-btn {
   cursor: pointer;
   border-radius: 8px;
   font-size: 1.1rem;
+  width: 100%;
 }
 
 button:hover, .option-btn:hover {
@@ -54,31 +84,15 @@ button:hover, .option-btn:hover {
   box-shadow: 6px 6px 0px #000000 !important;
 }
 
-/* Selected Button Glow Focus (Vibrant Sky Blue Accent instead of gray) */
 .option-btn.selected {
   background: #00f2fe !important;
   color: #000000 !important;
-  border-color: #000000 !important;
 }
 
-/* Success Validation States (Emerald Green) */
-.option-btn.correct {
-  background: #10ac84 !important;
-  color: white !important;
-}
+.option-btn.correct { background: #10ac84 !important; color: white !important; }
+.option-btn.incorrect { background: #2f3542 !important; color: #a4b0be !important; opacity: 0.6; }
+.option-btn:disabled:not(.correct):not(.incorrect):not(.selected) { opacity: 0.3; }
 
-/* Failure Validation States (Deep Sleek Charcoal instead of generic hot red tiles) */
-.option-btn.incorrect {
-  background: #2f3542 !important; 
-  color: #a4b0be !important;
-  opacity: 0.6;
-}
-
-.option-btn:disabled:not(.correct):not(.incorrect):not(.selected) {
-  opacity: 0.3;
-}
-
-/* Animated Trophy Node inside the endgame container panel */
 #gameover::before {
   content: "🏆";
   display: block;
@@ -93,3 +107,4 @@ button:hover, .option-btn:hover {
 }
 
 .hidden { display: none !important; }
+.microcopy { font-size: 0.85rem; opacity: 0.7; text-align: center; margin: 0; }
