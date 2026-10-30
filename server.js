@@ -25,7 +25,7 @@ const triviaDeck = [
   { question: "In what year did humans first land on the Moon?", choices: ["1965", "1969", "1972", "1975"], correct: "1969" },
   { question: "Which language has the most native speakers worldwide?", choices: ["English", "Spanish", "Mandarin Chinese", "Hindi"], correct: "Mandarin Chinese" },
   { question: "What is the hardest natural substance on Earth?", choices: ["Diamond", "Quartz", "Titanium", "Granite"], correct: "Diamond" },
-  { question: "Which gas do plants absorb from the air for photosynthesis?", options: ["Oxygen", "Nitrogen", "Hydrogen", "Carbon dioxide"], correct: "Carbon dioxide" }
+  { question: "Which gas do plants absorb from the air for photosynthesis?", choices: ["Oxygen", "Nitrogen", "Hydrogen", "Carbon dioxide"], correct: "Carbon dioxide" }
 ];
 
 app.use(express.static(path.join(__dirname, "public")));
