@@ -45,9 +45,9 @@ document.body.addEventListener("click", (e) => {
     }
   }
 
-  if (e.target.id === "startBtn") {
-    socket.emit("start_game");
-  }
+  if (e.target && e.target.closest("#startBtn")) {
+  socket.emit("start_game");
+}
 
   if (e.target.id === "copyBtn") {
     if (!myCode) return;
