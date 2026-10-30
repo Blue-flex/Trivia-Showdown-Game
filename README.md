@@ -1,4 +1,4 @@
-# Trivia Shockwave — Full-Stack Multiplayer Arena
+# Trivia Shockwave - Full-Stack Multiplayer Arena
 
 A real-time, event-driven multiplayer trivia application custom-built using Node.js, Express, and Socket.IO. The application isolates game loops natively on the server to maintain data integrity.
 
